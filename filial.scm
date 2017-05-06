@@ -2,7 +2,8 @@
 
 (use utils)
 
-(define path "/etc/mime.types")
+(define mime_path "/etc/mime.types")
+(define mailcap_path "/etc/mailcap")
 
 ;; Only process lines that contain mime definitions.
 (define (process-line toplevel line)
@@ -30,12 +31,12 @@
     (lambda (mimetype)
       (process-line
        toptype mimetype))
-    (read-lines path))))
+    (read-lines mime_path))))
 
 ;; Format the arguments for use with "find".
 (define (generate-find-args extensions)
-  (print (string-append " -name *." (string-join
-                                     extensions " -o -name *."))))
+  (print (string-append " -iname *." (string-join
+                                      extensions " -o -iname *."))))
 
 ;; Format the arguments for use with "grep".
 (define (generate-grep-args extensions)
@@ -43,11 +44,18 @@
           extensions " --include=*." 'prefix)))
 
 ;; Format the arguments for use with the shell.
-(define (generate-shell-args extensions)
-  (format #t "*.{~A}" (string-join
-                       extensions ",")))
+(define (generate-bash-args extensions)
+  (format #t "*.@(~A)" (string-join
+                        extensions "|")))
 
-(define type-map '(("shell" generate-shell-args)
+;; Format the arguments for use with the shell.
+(define (generate-zsh-args extensions)
+  (format #t "*.(~A)" (string-join
+                       extensions "|")))
+
+
+(define type-map '(("bash" generate-bash-args)
+                   ("zsh" generate-zsh-args)
                    ("grep" generate-grep-args)
                    ("find" generate-find-args)
                    ("regex" generate-regex-args)
