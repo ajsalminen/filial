@@ -24,7 +24,7 @@
     (string= wanted-mimetype mimetype)
     ))
 
-;; Check if the mimetype's type is the one of the passed.
+;; Check if the mimetype's type is in the passed list.
 (define (check-mimetype-list wanted-mimetype)
   (lambda (mimetype)
     (member mimetype wanted-mimetype)
@@ -48,7 +48,7 @@
         )))
 
 
-;; Read file and create a single list of all extensions for the top level type.
+;; Process a mime or mailcap file and return a list of extensions/mimetypes.
 (define (process-config-file path toptype matching-definition? process-definition)
   (flatten
    (map
@@ -57,6 +57,7 @@
        toptype mimetype matching-definition? process-definition))
     (read-lines path))))
 
+;; Programnames are checked first, if no match then just look for top level mime.
 (define (extensions toptype)
   (let ((mailcap-result (process-config-file mailcap_path toptype check-mimetype process-mailcap-definition)))
     ( if (null? mailcap-result)
