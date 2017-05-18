@@ -8,7 +8,7 @@ top level mime type. Current tools supported: the shell, find and grep.
 
 This lets you do something like this:
 
-   ls -lrt --color=auto $(filial.scm zsh audio)
+   ls -lrt --color=auto ${~$(filial.scm zsh audio)}
 
 # Future plans
 * xdg-open/run-mailcap replacement (open and edit files)
